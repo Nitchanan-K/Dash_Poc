@@ -19,7 +19,7 @@ import strategy_class.SmaCross_class
 SmaCross = strategy_class.SmaCross_class.SmaCross
 # -----------------
 # IMPORT COMPONENTS 
-from upload_data_component import dcc_Upload
+from Components.upload_data_component import dcc_Upload
 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -86,6 +86,8 @@ def parse_contents(contents, filename, date):
         })
     ])
 
+
+# APP CALLBACK (UPLOAD DATA)
 @app.callback(Output('output-datatable', 'children'),
               Input('upload-data', 'contents'),
               State('upload-data', 'filename'),
@@ -104,7 +106,6 @@ def update_output(list_of_contents, list_of_names, list_of_dates):
               State('stored-data','data'),
               State('xaxis-data','value'),
               State('yaxis-data', 'value'))
-
 def make_graphs(n, data, x_data, y_data):
     # set up data 
     df = pd.DataFrame(data,columns=['Date','Open','High','Low','Close','Adjclose','Volume'])
@@ -126,7 +127,6 @@ def make_graphs(n, data, x_data, y_data):
 @app.callback(Output('output-div-backtest','children'),
               Input('plot-button','n_clicks'),
               State('stored-data','data'))
-
 def plot_backtest(n,data):
     # set up data 
     df = pd.DataFrame(data,columns=['Date','Open','High','Low','Close','Adjclose','Volume'])

@@ -19,7 +19,7 @@ import strategy_class.SmaCross_class
 SmaCross = strategy_class.SmaCross_class.SmaCross
 # -----------------
 # IMPORT COMPONENTS 
-from upload_data_component import dcc_Upload
+from Components.upload_data_component import dcc_Upload
 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
