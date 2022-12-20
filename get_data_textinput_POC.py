@@ -14,14 +14,17 @@ import pandas as pd
 # Backtest lib 
 from backtesting import Backtest , Strategy
 # import strategy cless
-import strategy_class.SmaCross_class
+import strategy_class.SmaCross_class,strategy_class.Sma4Cross_class
 # initiate strategy class
 SmaCross = strategy_class.SmaCross_class.SmaCross
+Sma4Cross = strategy_class.Sma4Cross_class.Sma4Cross
 # -----------------
 # IMPORT COMPONENTS 
 from Components.upload_data_component import dcc_Upload
-from Components.input_set_cash import ddc_Cash_Input
+from Components.input_set_cash import dcc_Cash_Input
 
+# set dict strategy use in drop down string 
+strategy_dict = {'SmaCross':SmaCross,'Sma4Cross':Sma4Cross}
 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -34,8 +37,12 @@ app = dash.Dash(__name__,external_stylesheets=external_stylesheets,
 
 app.layout = html.Div([
 
+    # SET STRATEGY 
+    dcc.Dropdown(['Sma4Cross','SmaCross','3'],'Sma4Cross', id='demo-dropdown'),
+    html.Div(id='dd-output-container'),
+
     # SET CASH
-    ddc_Cash_Input,
+    dcc_Cash_Input,
     html.Button(id='submit-button', type='submit', children='Submit'),
     html.Div(id='output_div_BUTTON'),
 
@@ -129,7 +136,18 @@ def parse_contents(contents, filename, date):
         })
     ])
 
+
+
 # CALLBACK ------------------------------------------
+
+# APP CALLBACK (DROP DOWN)
+@app.callback(
+    Output('dd-output-container','children'),
+    Input('demo-dropdown', 'value')
+)
+def update_output_dropdown(value):
+    return f'Yo have selected {value} strategy'
+
 # APP CALLBACK (UPLOAD DATA)
 @app.callback(Output('output-datatable', 'children'),
               Input('upload-data', 'contents'),
@@ -200,12 +218,13 @@ def update_output_exclusive_order_switch(on):
               State('set_margin','value'),
               State('trade_on_close_boolean_switch','on'),
               State('hedging_boolean_switch','on'),
-              State('exclusive_order_boolean_switch','on')
+              State('exclusive_order_boolean_switch','on'),
+              State('demo-dropdown','value')
               )
 
 
 def plot_backtest(n,data,num_set_cash,num_set_commission,num_set_margin,boolean_set_trade_on_close,
-boolean_set_hedging,boolean_set_exclusive_order):
+boolean_set_hedging,boolean_set_exclusive_order,str_set_strategy):
     # set up data 
     df = pd.DataFrame(data,columns=['Date','Open','High','Low','Close','Adjclose','Volume'])
     df['Date'] = pd.to_datetime(df['Date'])
@@ -219,12 +238,14 @@ boolean_set_hedging,boolean_set_exclusive_order):
     trade_on_close_from_input = boolean_set_trade_on_close
     hedging_from_input = boolean_set_hedging
     exclusive_order_from_input = boolean_set_exclusive_order
+    strategy_from_input = strategy_dict[str_set_strategy]
 
     if n is not None:
         print("BUTTON CLICKED (plot_backtest)")
         
         # SET UP BACKTEST 
-        bt = Backtest(df, SmaCross, 
+        bt = Backtest(df, 
+        strategy_from_input, 
         cash=cash_from_input, 
         commission=commission_from_input,
         margin=margin_from_input,
@@ -244,6 +265,7 @@ boolean_set_hedging,boolean_set_exclusive_order):
         print('trade_on_close =',trade_on_close_from_input)
         print('hedgin =',hedging_from_input)
         print('exclusive_orders =',exclusive_order_from_input)
+        print('strategy =',strategy_from_input)
     else:
         return dash.no_update
 

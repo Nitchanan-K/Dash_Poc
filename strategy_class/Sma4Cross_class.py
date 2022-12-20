@@ -1,4 +1,3 @@
-
 from backtesting import Backtest, Strategy
 from backtesting.lib import crossover
 from backtesting.test import SMA, GOOG, EURUSD
@@ -48,4 +47,3 @@ class Sma4Cross(Strategy):
                     crossover(self.data.Close, self.sma_exit)):
                 self.position.close()
 
-sma_4 = Sma4Cross
