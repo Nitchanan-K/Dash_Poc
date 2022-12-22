@@ -146,7 +146,7 @@ def parse_contents(contents, filename, date):
     Input('demo-dropdown', 'value')
 )
 def update_output_dropdown(value):
-    return f'Yo have selected {value} strategy'
+    return f'You have selected {value} strategy'
 
 # APP CALLBACK (UPLOAD DATA)
 @app.callback(Output('output-datatable', 'children'),
