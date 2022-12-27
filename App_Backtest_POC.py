@@ -29,7 +29,7 @@ strategy_dict = {'SmaCross':SmaCross,'Sma4Cross':Sma4Cross}
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-df = pd.read_csv('test_data.csv',index_col='Date',parse_dates=True)
+#df = pd.read_csv('test_data.csv',index_col='Date',parse_dates=True)
 
 
 app = dash.Dash(__name__,external_stylesheets=external_stylesheets,

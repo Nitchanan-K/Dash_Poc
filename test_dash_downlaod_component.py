@@ -32,8 +32,16 @@ df.reset_index(drop=True, inplace=True)
 #print(df)
 
 app = Dash(__name__)
+
+
+# APP LAYOUT
 app.layout = html.Div([
  
+     # TEXT INPUT
+    dcc.Input(id="ticket_input",type='text', value='',placeholder='Crypto Name'),
+    html.Div(id='ticket_output'),
+  
+
     dcc.DatePickerRange
     (   id='my-date-picker-range',
         min_date_allowed=date(2008,12,30),
@@ -50,8 +58,20 @@ app.layout = html.Div([
     html.Div(id='dd-interval-output-container'),
 
     html.Button("Download CSV", id="btn_csv"),
+
+    html.Hr(),
+   
+
     dcc.Download(id="download-dataframe-csv")
 ])
+
+# APP CALLBACK (TEXT INPUT)
+@app.callback(
+    Output('ticket_output','children'),
+    Input('ticket_input', 'value')
+)
+def text_input(value):
+    return 'You have entered "{}"'.format(value)
 
 
 # APP CALLBACK(INTERVAL DROP DOWN)
@@ -70,15 +90,19 @@ def update_output_dropdown(value):
     State('my-date-picker-range', 'start_date'),
     State('my-date-picker-range', 'end_date'),
     State('interval-dropdown','value'),
+    State('ticket_input','value'),
     prevent_initial_call=True,
 )
-def func(n_clicks,start_date, end_date,interval):
+def func(n_clicks,start_date, end_date,interval,ticket_name):
    
     if n_clicks is not None:
         print(n_clicks)
     
         if start_date and end_date is not None:
             
+            # Setup Ticket name
+            ticket_name_from_input = ticket_name
+            print(ticket_name_from_input)
             # Setup Date
             start_date_object = date.fromisoformat(start_date)
             start_date_string = start_date_object.strftime('%m/%d/%Y')
@@ -90,7 +114,7 @@ def func(n_clicks,start_date, end_date,interval):
             print(end_date_string)
             print(type(end_date_string))
 
-            # Interval setup 
+            # Setup Interval 
             if interval == 'Day':
                 interval = '1d'
                 print('Interval =',interval)
@@ -102,7 +126,7 @@ def func(n_clicks,start_date, end_date,interval):
                 print('Interval =',interval)
 
         # download data from API yahoo fin 
-        data_downloaded = get_data('RPR-USD',start_date=start_date_string,
+        data_downloaded = get_data(f'{ticket_name_from_input}',start_date=start_date_string,
                                              end_date=end_date_string, 
                                              index_as_date=False,
                                              interval=interval)
