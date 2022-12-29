@@ -36,7 +36,7 @@ app = dash.Dash(__name__,external_stylesheets=external_stylesheets,
             suppress_callback_exceptions=True)
 
 app.layout = html.Div([
-
+   
     # SET STRATEGY 
     dcc.Dropdown(['Sma4Cross','SmaCross','3'],'Sma4Cross', id='demo-dropdown'),
     html.Div(id='dd-output-container'),
@@ -81,7 +81,7 @@ app.layout = html.Div([
     # Will show when data is uploaded ------
     html.Div(id='output-div'),
     html.Div(id='output-div-backtest'),
-    html.Div(id='output-datatable'),
+    html.Div(id='output-datatable'), html.Iframe(src='Sma4Cross.html', style={'width': '100%', 'height': 500})
 
     ])
 

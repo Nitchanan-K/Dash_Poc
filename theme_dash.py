@@ -1,0 +1,82 @@
+theme = {
+   "accent":"#004172",
+   "accent_negative":"#ff2c6d",
+   "accent_positive":"#33ffe6",
+   "background_content":"#edf3f4",
+   "background_page":"#d6e4ea",
+   "border":"#8EA9C1",
+   "breakpoint_font":"1200px",
+   "breakpoint_stack_blocks":"700px",
+   "card_border":{
+       "width":"0px",
+       "style":"solid",
+       "color":"#8EA9C1",
+       "radius":"0px"
+   },
+   "card_background_color":"#edf3f4",
+   "card_box_shadow":"0px 0px 0px rgba(0,0,0,0)",
+   "card_margin":"15px",
+   "card_padding":"5px",
+   "card_outline":{
+       "width":"0px",
+       "style":"solid",
+       "color":"#8EA9C1"
+   },
+   "card_header_border":{
+       "width":"0px",
+       "style":"solid",
+       "color":"#8EA9C1",
+       "radius":"0px"
+   },
+   "card_header_background_color":"#edf3f4",
+   "card_header_box_shadow":"0px 0px 0px rgba(0,0,0,0)",
+   "card_header_margin":"0px",
+   "card_header_padding":"10px",
+   "colorway":[
+       "#004172",
+       "#3366cc",
+       "#dc3912",
+       "#ff9900",
+       "#109618",
+       "#990099",
+       "#0099c6",
+       "#dd4477",
+       "#66aa00",
+       "#b82e2e"
+   ],
+   "colorscale":[
+       "#004172",
+       "#2f5381",
+       "#4b6790",
+       "#657b9f",
+       "#7f8faf",
+       "#98a5bf",
+       "#b1bbce",
+       "#cbd1de",
+       "#e5e8ef",
+       "#ffffff"
+   ],
+   "font_family":"Quicksand",
+   "font_size":"17px",
+   "font_size_smaller_screen":"15px",
+   "font_family_header":"PT Sans",
+   "font_size_header":"24px",
+   "font_family_headings":"PT Sans",
+   "font_headings_size":None,
+   "header_border":{
+       "width":"0px",
+       "style":"solid",
+       "color":"#8EA9C1",
+       "radius":"0px"
+   },
+   "header_background_color":"#d6e4ea",
+   "header_box_shadow":"none",
+   "header_margin":"0px 0px 15px 0px",
+   "header_padding":"0px",
+   "text":"#718BA5",
+   "report_font_family":"Computer Modern",
+   "report_font_size":"12px",
+   "report_background_page":"white",
+   "report_background_content":"#FAFBFC",
+   "report_text":"black"
+}
