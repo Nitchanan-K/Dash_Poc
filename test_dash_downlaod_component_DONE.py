@@ -36,8 +36,9 @@ app = Dash(__name__)
 
 # APP LAYOUT
 app.layout = html.Div([
- 
-     # TEXT INPUT
+    
+    # TEXT INPUT
+    html.P("For example BTC-USD or ETH-USD"),
     dcc.Input(id="ticket_input",type='text', value='',placeholder='Crypto Name'),
     html.Div(id='ticket_output'),
   
@@ -58,12 +59,11 @@ app.layout = html.Div([
     html.Div(id='dd-interval-output-container'),
 
     html.Button("Download CSV", id="btn_csv"),
-
     html.Hr(),
-   
-
     dcc.Download(id="download-dataframe-csv")
 ])
+
+#------------------------------------------------------------------------------
 
 # APP CALLBACK (TEXT INPUT)
 @app.callback(
@@ -93,6 +93,7 @@ def update_output_dropdown(value):
     State('ticket_input','value'),
     prevent_initial_call=True,
 )
+
 def func(n_clicks,start_date, end_date,interval,ticket_name):
    
     if n_clicks is not None:

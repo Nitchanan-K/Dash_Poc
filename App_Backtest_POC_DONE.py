@@ -1,6 +1,7 @@
 import base64
 import datetime
 import io
+from datetime import date
 
 import dash
 from dash.dependencies import Input, Output, State
@@ -13,7 +14,7 @@ import pandas as pd
 # -----------------
 # Backtest lib 
 from backtesting import Backtest , Strategy
-# import strategy cless
+# IMPORT Strategy Cless
 import strategy_class.SmaCross_class,strategy_class.Sma4Cross_class
 # initiate strategy class
 SmaCross = strategy_class.SmaCross_class.SmaCross
@@ -22,6 +23,11 @@ Sma4Cross = strategy_class.Sma4Cross_class.Sma4Cross
 # IMPORT COMPONENTS 
 from Components.upload_data_component import dcc_Upload
 from Components.input_set_cash import dcc_Cash_Input
+# -----------------
+# IMPORT yahoo API 
+from yahoo_fin.stock_info import *
+from yahoo_fin.stock_info import get_analysts_info
+import yahoo_fin.stock_info as si
 
 # set dict strategy use in drop down string 
 strategy_dict = {'SmaCross':SmaCross,'Sma4Cross':Sma4Cross}
@@ -35,55 +41,77 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__,external_stylesheets=external_stylesheets,
             suppress_callback_exceptions=True)
 
-app.layout = html.Div([
-   
-    # SET STRATEGY 
-    dcc.Dropdown(['Sma4Cross','SmaCross','3'],'Sma4Cross', id='demo-dropdown'),
-    html.Div(id='dd-output-container'),
+app.layout = html.Div(
+    id="app-container",
+    children=
+    [
+        # Left column
+        html.Div(
+            id="left-column",
+            className="eight columns",
+            children=[
+    
+            # SET STRATEGY 
+            html.P("Select Your Strategy"),
+            dcc.Dropdown(['Sma4Cross','SmaCross','3'],'Sma4Cross', id='demo-dropdown'),
+            html.Div(id='dd-output-container'),
+            html.Br(),
 
-    # SET CASH
-    dcc_Cash_Input,
-    html.Button(id='submit-button', type='submit', children='Submit'),
-    html.Div(id='output_div_BUTTON'),
+            # SET CASH
+            html.P("Set Your Innitial Cash"),
+            dcc_Cash_Input,
+            html.Button(id='submit-button', type='submit', children='Submit'),
+            html.Div(id='output_div_BUTTON'),
+            html.Br(),
+    
+            # SET COMMISSION AND MARGIN
+            html.P("Set Your Commission %"),
+            dcc.Input(id='set_commission', value=0.0, type="number",placeholder='Set Comission',
+            debounce= True,min=0,minLength=0,maxLength=10,required=False,step=0.0001),
+            html.Br(),
+            html.P("Set Your Margin"),
+            dcc.Input(id='set_margin', value=1, type="number",placeholder='Set Margin',
+            debounce= True,min=0,minLength=0,maxLength=10,required=False,step=0.01),
 
-    # SET COMMISSION AND MARGIN
-    dcc.Input(id='set_commission', value=0.0, type="number",placeholder='Set Comission',
-    debounce= True,min=0,minLength=0,maxLength=10,required=False,step=0.0001),
-    html.Br(),
-    dcc.Input(id='set_margin', value=1, type="number",placeholder='Set Margin',
-    debounce= True,min=0,minLength=0,maxLength=10,required=False,step=0.01),
+            # Confirm Button
+            dcc.ConfirmDialogProvider(
+                children=html.Button(id='confirm-button', children='Confrim Setup',type='submit'),
+                id='danger-provider',
+                message='Confirm Trade Setup?',
+                submit_n_clicks=0
+                                    ),
 
-    # Confirm Button
-    dcc.ConfirmDialogProvider(
-        children=html.Button(id='confirm-button', children='Confrim Setup',type='submit'),
-        id='danger-provider',
-        message='Confirm Trade Setup?',
-        submit_n_clicks=0
-    ),
-    html.Div(id='output-confirm-button'),
+            html.Div(id='output-confirm-button'),
 
+            # SET BOOLEAN OF trade on close / hedging / exclusive order 
+            # trade on close 
+            daq.BooleanSwitch(id='trade_on_close_boolean_switch', on=False),
+            html.Div(id='trade_on_close_boolean_output'),
+            # hedging
+            daq.BooleanSwitch(id='hedging_boolean_switch', on=False),
+            html.Div(id='hedging_boolean_output'),
+            # exclusive order 
+            daq.BooleanSwitch(id='exclusive_order_boolean_switch', on=False),
+            html.Div(id='exclusive_order_boolean_output'),
 
-    # SET BOOLEAN OF trade on close / hedging / exclusive order 
-    # trade on close 
-    daq.BooleanSwitch(id='trade_on_close_boolean_switch', on=False),
-    html.Div(id='trade_on_close_boolean_output'),
-    # hedging
-    daq.BooleanSwitch(id='hedging_boolean_switch', on=False),
-    html.Div(id='hedging_boolean_output'),
-    # exclusive order 
-    daq.BooleanSwitch(id='exclusive_order_boolean_switch', on=False),
-    html.Div(id='exclusive_order_boolean_output'),
+            # UPLOAD FILE USE AS DATA
+            dcc_Upload,
 
-
-    # UPLOAD FILE USE AS DATA
-    dcc_Upload,
-
-    # Will show when data is uploaded ------
-    html.Div(id='output-div'),
-    html.Div(id='output-div-backtest'),
-    html.Div(id='output-datatable'), html.Iframe(src='Sma4Cross.html', style={'width': '100%', 'height': 500})
+            # Will show when data is uploaded ------
+            html.Div(id='output-div'),
+            html.Div(id='output-div-backtest'),
+            html.Div(id='output-datatable')
+            #html.Div(id='output-datatable'), 
+            # html.Iframe(src='Sma4Cross.html', style={'width': '100%', 'height': 500}) = making bugs with multiple windows showing
+            
+                ])
+                # END Left Column
+            
+        # Right column
+        
 
     ])
+    # END app.layout
 
 # FUNCTION ------------------------------------------
 
@@ -126,8 +154,9 @@ def parse_contents(contents, filename, date):
         # file size no more than 2-5 mb
         dcc.Store(id='stored-data', data=df.to_dict('records')),
 
-        html.Hr(),  # horizontal line
-
+        # horizontal line
+        html.Hr()
+        ,  
         # For debugging, display the raw contents provided by the web browser
         html.Div('Raw Content'),
         html.Pre(contents[0:200] + '...', style={
@@ -138,7 +167,7 @@ def parse_contents(contents, filename, date):
 
 
 
-# CALLBACK ------------------------------------------
+# CALLBACK ------------------------------------------ LEFT COLUMN
 
 # APP CALLBACK (DROP DOWN)
 @app.callback(
@@ -282,7 +311,7 @@ def update_output(clicks, input_value):
     var = input_value
     if clicks is not None:
         print(var)
-    return var
+    return var," USD"
 
 # APP CALLBACK (CONFRIM BUTTON) 
 @app.callback(
@@ -296,12 +325,20 @@ def update_output(clicks, input_value):
     [State('exclusive_order_boolean_switch','on')]
                 
 )
+
+# CALLBACK ------------------------------------------ RIGHT COLUMN
+# APP CALLBACK (TEXT INPUT)
+###
+
+###
+
+
 def update_output(clicks,cash,commission,margin,trade_on_close,hedging,exclusive_order):
     if clicks is not None:
         print('--------------','\n','CONFRIM BUTTON Work')
         print(cash,'\n',commission,'\n',margin,'\n',trade_on_close,'\n',hedging,'\n',exclusive_order)
         
-    return cash,commission,margin,trade_on_close,hedging,exclusive_order
+    return "cash(usd)=",cash,"commission % ",commission,"margin ",margin,trade_on_close,hedging,exclusive_order
 
 if __name__ == '__main__':
     app.run_server(debug=True)
