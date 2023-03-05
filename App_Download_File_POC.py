@@ -27,9 +27,10 @@ df.rename(columns={'date': 'Date', 'open': 'Open', 'high': 'High', 'low': 'Low',
                        'adjclose': 'Adjclose', 'volume': 'Volume'}, inplace=True)
 
 df.reset_index(drop=True, inplace=True)
-'''
 
 #print(df)
+'''
+
 
 app = Dash(__name__)
 app.layout = html.Div([
@@ -50,7 +51,7 @@ app.layout = html.Div([
     dcc.Download(id="download-dataframe-csv")
 ])
 
-
+#  APP CALLBACK -- DOWNLOAD DATAFRAME CSV SECTION 
 #  APP CALLBACK (DOWNLOAD DATA API)
 @app.callback(
     Output("download-dataframe-csv", "data"),
@@ -97,7 +98,7 @@ def func(n_clicks,start_date, end_date):
     Input('my-date-picker-range', 'start_date'),
     Input('my-date-picker-range', 'end_date')
 )
-def update_output(start_date, end_date):
+def update_output_start_end_date(start_date, end_date):
     string_prefix = 'You have selected: '
     if start_date is not None:
         start_date_object = date.fromisoformat(start_date)

@@ -136,9 +136,11 @@ def func(n_clicks,start_date, end_date,interval,ticket_name):
         # clearing data 
         df = pd.DataFrame(data_downloaded)
         df.drop(columns='ticker', inplace=True)
+        
         df.rename(columns={'date': 'Date', 'open': 'Open', 'high': 'High', 'low': 'Low', 'close': 'Close',
                        'adjclose': 'Adjclose', 'volume': 'Volume'}, inplace=True)
-        df.reset_index(drop=True, inplace=True)
+        #df.reset_index(drop=True, inplace=True)
+        df.set_index('Date', inplace=True)
 
     return dcc.send_data_frame(df.to_csv, 'mydf.csv')
 
