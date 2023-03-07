@@ -101,7 +101,9 @@ app.layout = html.Div(
             html.Div(id='output-div'),
             html.Div(id='output-div-backtest'),
             html.Div(id='output-datatable'),
-            #html.Div(id='output-datatable'), 
+           
+            # END Left Column
+            
             # html.Iframe(src='Sma4Cross.html', style={'width': '100%', 'height': 500}) = making bugs with multiple windows showing
               # Right column
             html.Div(id='right-column',
@@ -136,7 +138,7 @@ app.layout = html.Div(
                  
                      )
                     ])
-                # END Left Column
+                # END RIGHT Column
             
       
                  
